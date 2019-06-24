@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const colorPaletteSchema = new mongoose.Schema({
-  name: String,
   color1: String,
   color2: String,
   color3: String,

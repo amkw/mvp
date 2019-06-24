@@ -6,6 +6,10 @@ exports.getSome = (req, res) => {
 }
 
 exports.add = (req, res) => {
-  Palette.create(req);
-  res.end();
+  const record = {};
+  req.map((color, index) => {
+    record[`color${index+1}`] = color;
+  });
+  Palette.create(record);
+  res.end('created');
 }

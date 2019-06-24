@@ -11,7 +11,7 @@ class App extends React.Component {
     this.state = {
       colorpalettes: [],
       selectedFile: null,
-      pickedColors: ['#F0F0F0', '#F0F0F0', '#F0F0F0', '#F0F0F0','#F0F0F0'],
+      pickedColors: ['#E8E8E8', '#E8E8E8', '#E8E8E8', '#E8E8E8','#E8E8E8'],
       counter: 0
     };
     // this.addAttendee = this.addAttendee.bind(this);
@@ -19,6 +19,10 @@ class App extends React.Component {
     this.fileChangedHandler = this.fileChangedHandler.bind(this);
     this.uploadHandler = this.uploadHandler.bind(this);
     this.selectColor = this.selectColor.bind(this);
+  }
+
+  componentDidMount() {
+    this.getPalettes();
   }
 
   fileChangedHandler(e) {
@@ -60,17 +64,13 @@ class App extends React.Component {
         counter: this.state.counter+1
       });
     } else {
+      this.savePalette();
       this.setState({
-        pickedColors: ['#F0F0F0', '#F0F0F0', '#F0F0F0', '#F0F0F0', '#F0F0F0'],
+        pickedColors: ['#E8E8E8', '#E8E8E8', '#E8E8E8', '#E8E8E8', '#E8E8E8'],
         counter: 0
       });
     }
   }
-
-  // mouseDown(e) {
-  //   this.selectColor(e);
-  //   console.log(this.state);
-  // }
 
   // getAttendees() {
   //   axios.get('/colorpalettes')
@@ -87,13 +87,43 @@ class App extends React.Component {
   //       this.getAttendees();
   //     });
   // }
+  savePalette() {
+    axios.post('/colorpalettes', this.state.pickedColors)
+      .then((res) => {
+        console.log('Post Paletter:',res);
+        this.getPalettes();
+      });
+  };
+
+  getPalettes() {
+    axios.get('/colorpalettes')
+      .then((res) => {
+        let palettes = res.data.map((record) => {
+          // console.log('record :', record);
+          let colorArr = [];
+          delete record._id;
+          delete record.__v;
+          Object.keys(record).forEach((color) => colorArr.push(record[color]));
+          // console.log('colorArr', colorArr)
+          return colorArr;
+        });
+        this.setState({ colorpalettes: palettes });
+        // console.log('Get Palettes:', palettes);
+      })
+  }
 
   render() {
+    let colorPalettes = this.state.colorpalettes.map((palette, index) => {
+      return (<PickedColors colors={palette}/>);
+    });
+
     return (
       <div className="main">
         <div className="rightCol">
           <h2>My Swatches</h2>
-          {/* < ColorPaletteList /> */}
+          <div>
+            {colorPalettes}
+          </div>
         </div>
         <div className="leftCol">
           <h2>Color Picker</h2>
