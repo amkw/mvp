@@ -1,29 +1,24 @@
 import React from 'react';
-import path from 'path';
 import axios from 'axios';
+import PickedColors from './PickedColors.jsx';
 
 
-// import AttendeeForm from './AttendeeForm.jsx';
-// import AttendeeList from './AttendeeList.jsx';
-function rect(props) {
-  const { ctx, x, y, width, height } = props;
-  ctx.fillRect(x, y, width, height);
-}
 class App extends React.Component {
 
   constructor() {
     super();
+    let ctx;
     this.state = {
       colorpalettes: [],
       selectedFile: null,
+      pickedColors: ['#F0F0F0', '#F0F0F0', '#F0F0F0', '#F0F0F0','#F0F0F0'],
+      counter: 0
     };
     // this.addAttendee = this.addAttendee.bind(this);
     // this.getAttendees = this.getAttendees.bind(this);
     this.fileChangedHandler = this.fileChangedHandler.bind(this);
     this.uploadHandler = this.uploadHandler.bind(this);
-  }
-
-  componentDidMount() {
+    this.selectColor = this.selectColor.bind(this);
   }
 
   fileChangedHandler(e) {
@@ -36,20 +31,46 @@ class App extends React.Component {
 
     return axios.post('http://localhost:3010/' + 'uploadedimage', data)
       .then(response => {
-        console.log(response)
         this.updateCanvas(response.data.imageUrl)})
 
   }
 
   updateCanvas(url) {
     const canvas = this.refs.canvas;
-    const ctx = canvas.getContext("2d");
+    this.ctx = canvas.getContext("2d");
     const img = new Image();
     img.src = 'http://localhost:3010/'+ url;
       img.onload = () => {
-        ctx.drawImage(img, 0, 0, 640, 425);
+        this.ctx.drawImage(img, 0, 0, 640, 425);
       }
   }
+
+  selectColor(e) {
+    let x = e.nativeEvent.offsetX;
+    let y = e.nativeEvent.offsetY;
+    let imageData = this.ctx.getImageData(x, y, 1, 1).data;
+    let rgbColor = 'rgb(' + imageData[0] + ',' + imageData[1] + ',' + imageData[2] + ')';
+    if (this.state.counter < 5) {
+      let allColors = this.state.pickedColors;
+      allColors[this.state.counter] = rgbColor;
+      // console.log('counter', this.state.counter)
+      // console.log('pickedColors', this.state.pickedColors)
+      this.setState({
+        pickedColors: allColors,
+        counter: this.state.counter+1
+      });
+    } else {
+      this.setState({
+        pickedColors: ['#F0F0F0', '#F0F0F0', '#F0F0F0', '#F0F0F0', '#F0F0F0'],
+        counter: 0
+      });
+    }
+  }
+
+  // mouseDown(e) {
+  //   this.selectColor(e);
+  //   console.log(this.state);
+  // }
 
   // getAttendees() {
   //   axios.get('/colorpalettes')
@@ -77,11 +98,11 @@ class App extends React.Component {
         <div className="leftCol">
           <h2>Color Picker</h2>
           <h5>1. Upload an image.</h5>
-          <h5>2. Choose 5 colors then click save.</h5>
+          <h5>2. Click to choose 5 colors from the image.</h5>
           <input type="file" onChange={this.fileChangedHandler}></input>
           <button onClick={this.uploadHandler}>Upload!</button>
-          <canvas ref="canvas" width={640} height={425}/>
-          {/* < ColorPalettePicker /> */}
+          <canvas ref="canvas" width={640} height={425} onMouseDown={this.selectColor}/>
+          < PickedColors colors={this.state.pickedColors}/>
         </div>
       </div>
     );
@@ -91,11 +112,6 @@ class App extends React.Component {
 export default App;
 
 
-// TODO render an image
-// TODO make sure upload is saving
-// TODO render uploaded image
-// TODO add color picker
-// TODO add react to color picker
 // TODO save color palette
 // TODO show color palettes in db
 // TODO show color in multiple formats

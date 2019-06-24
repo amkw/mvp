@@ -50,6 +50,12 @@ canvas {
   flex-flow: column nowrap;
 }
 
+.colorBlock {
+  height: 40px;
+  width: 60px;
+  margin: 2px;
+}
+
 /* .attendee-form {
   display: flex;
   width: 70%;
