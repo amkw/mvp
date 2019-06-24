@@ -13,7 +13,7 @@ h1 {
 }
 
 h2 {
-  margin-bottom:2px;
+  margin-bottom:20px;
   color: #757c80;
 }
 
@@ -54,7 +54,7 @@ canvas {
   height: 40px;
   width: 60px;
   margin: 2px;
-  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 /* .attendee-form {

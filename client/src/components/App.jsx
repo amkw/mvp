@@ -107,7 +107,8 @@ class App extends React.Component {
           // console.log('colorArr', colorArr)
           return colorArr;
         });
-        this.setState({ colorpalettes: palettes });
+        let reversed = palettes.reverse();
+        this.setState({ colorpalettes: reversed });
         // console.log('Get Palettes:', palettes);
       })
   }
