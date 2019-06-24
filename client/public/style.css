@@ -20,6 +20,15 @@ h2 {
 h5 {
   /* margin-bottom: 20px; */
   color: #757c80;
+  margin: 2px;
+}
+
+canvas {
+  margin: 10px;
+}
+
+.hidden {
+  display: none;
 }
 
 .main {
@@ -69,17 +78,17 @@ input {
   border:0;
   font-family:'Montserrat',sans-serif;
   transition:all .3s;
-  border-bottom:2px solid #5C8BA5;
+  /* border-bottom:2px solid #5C8BA5; */
 }
-
+/*
 input:focus {
   border-bottom:2px solid #2a79a7;
-}
+} */
 
 button {
   float:right;
   padding:8px 12px;
-  margin: 50px 0px 0px 0px;
+  /* margin: 50px 0px 0px 0px; */
   border:2px solid #5C8BA5;
   background: #f7f7f7;
   cursor:pointer;
