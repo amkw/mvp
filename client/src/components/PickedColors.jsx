@@ -6,7 +6,7 @@ let PickedColors = (props) => {
   };
 
   let colorBlocks = props.colors.map((color, index) => {
-    return (<div key={index} className='colorBlock' style={{backgroundColor:color}} ></div>);
+    return (<div key={index} className='colorBlock' style={{backgroundColor:color}} onClick={() => {props.handleClick(color)}}></div>);
   });
   return (
     <div style={containerStyle}>

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import PickedColors from './PickedColors.jsx';
+import Modal from './Modal.jsx';
 
 
 class App extends React.Component {
@@ -12,13 +13,15 @@ class App extends React.Component {
       colorpalettes: [],
       selectedFile: null,
       pickedColors: ['#E8E8E8', '#E8E8E8', '#E8E8E8', '#E8E8E8','#E8E8E8'],
-      counter: 0
+      counter: 0,
+      showModal: false,
+      colorInFocus: '',
     };
-    // this.addAttendee = this.addAttendee.bind(this);
-    // this.getAttendees = this.getAttendees.bind(this);
     this.fileChangedHandler = this.fileChangedHandler.bind(this);
     this.uploadHandler = this.uploadHandler.bind(this);
     this.selectColor = this.selectColor.bind(this);
+    this.handleClick = this.handleClick.bind(this);
+    this.hideModal = this.hideModal.bind(this);
   }
 
   componentDidMount() {
@@ -57,8 +60,6 @@ class App extends React.Component {
     if (this.state.counter < 5) {
       let allColors = this.state.pickedColors;
       allColors[this.state.counter] = rgbColor;
-      // console.log('counter', this.state.counter)
-      // console.log('pickedColors', this.state.pickedColors)
       this.setState({
         pickedColors: allColors,
         counter: this.state.counter+1
@@ -72,21 +73,6 @@ class App extends React.Component {
     }
   }
 
-  // getAttendees() {
-  //   axios.get('/colorpalettes')
-  //     .then(res => {
-  //       this.setState({
-  //         colorpalettes: res.data,
-  //       });
-  //     });
-  // }
-
-  // addAttendee(colorpalettes) {
-  //   axios.post('/colorpalettes', colorpalettes)
-  //     .then(() => {
-  //       this.getAttendees();
-  //     });
-  // }
   savePalette() {
     axios.post('/colorpalettes', this.state.pickedColors)
       .then((res) => {
@@ -99,23 +85,33 @@ class App extends React.Component {
     axios.get('/colorpalettes')
       .then((res) => {
         let palettes = res.data.map((record) => {
-          // console.log('record :', record);
           let colorArr = [];
           delete record._id;
           delete record.__v;
           Object.keys(record).forEach((color) => colorArr.push(record[color]));
-          // console.log('colorArr', colorArr)
           return colorArr;
         });
         let reversed = palettes.reverse();
         this.setState({ colorpalettes: reversed });
-        // console.log('Get Palettes:', palettes);
       })
   }
 
+  handleClick(color) {
+    console.log(color);
+    this.setState({
+      showModal: true,
+      colorInFocus: color
+    });
+  }
+
+  hideModal() {
+    console.log('hiding Modal')
+    this.setState({ showModal: false });
+  };
+
   render() {
     let colorPalettes = this.state.colorpalettes.map((palette, index) => {
-      return (<PickedColors colors={palette}/>);
+      return (<PickedColors key={index} colors={palette} handleClick={this.handleClick}/>);
     });
 
     return (
@@ -135,6 +131,7 @@ class App extends React.Component {
           <canvas ref="canvas" width={640} height={425} onMouseDown={this.selectColor}/>
           < PickedColors colors={this.state.pickedColors}/>
         </div>
+        < Modal show={this.state.showModal} handleClose={this.hideModal} color={this.state.colorInFocus}/>
       </div>
     );
   }
@@ -143,6 +140,4 @@ class App extends React.Component {
 export default App;
 
 
-// TODO save color palette
-// TODO show color palettes in db
 // TODO show color in multiple formats
